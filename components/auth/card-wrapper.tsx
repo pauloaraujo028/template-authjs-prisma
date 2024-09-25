@@ -10,6 +10,7 @@ import {
   CardHeader,
 } from "@/components/ui/card";
 import React from "react";
+import { ClassNameValue } from "tailwind-merge";
 
 interface CardWrapperProps {
   children: React.ReactNode;
@@ -17,6 +18,8 @@ interface CardWrapperProps {
   backButtonLabel: string;
   backButtonHref: string;
   showSocial?: boolean;
+  classNames?: ClassNameValue;
+  title: string;
 }
 
 export const CardWrapper = ({
@@ -25,11 +28,13 @@ export const CardWrapper = ({
   backButtonHref,
   backButtonLabel,
   showSocial,
+  classNames,
+  title,
 }: CardWrapperProps) => {
   return (
-    <Card className="w-[400px] shadow-md">
+    <Card className={`${classNames} w-[400px] shadow-md`}>
       <CardHeader>
-        <Header label={headerLabel} />
+        <Header label={headerLabel} title={title} />
       </CardHeader>
       <CardContent>{children}</CardContent>
       {showSocial && (
