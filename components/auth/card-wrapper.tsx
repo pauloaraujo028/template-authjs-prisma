@@ -19,8 +19,8 @@ interface CardWrapperProps {
   backButtonHref: string;
   showSocial?: boolean;
   classNames?: ClassNameValue;
-  title: string;
-  text: string;
+  title?: string;
+  text?: string;
 }
 
 export const CardWrapper = ({

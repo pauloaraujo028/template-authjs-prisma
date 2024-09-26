@@ -13,6 +13,7 @@ export const configRoutes: ConfigRoutes = {
   authRoutes: [
     "/auth/login",
     "/auth/register",
+    "/auth/error",
     "/api/auth/signin",
     "/api/auth/callback/*",
   ],

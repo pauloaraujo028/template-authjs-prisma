@@ -1,6 +1,6 @@
 interface HeaderProps {
   label: string;
-  title: string;
+  title?: string;
 }
 
 export const Header = ({ label, title }: HeaderProps) => {
