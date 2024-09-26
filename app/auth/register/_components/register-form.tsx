@@ -15,7 +15,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { registerSchema } from "@/schemas";
+import { registerSchema } from "@/schemas/auth";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Image from "next/image";
 import { useState, useTransition } from "react";
@@ -63,11 +63,11 @@ export const RegisterForm = () => {
       <div>
         <CardWrapper
           headerLabel="Criar uma conta"
-          backButtonLabel="Já tem uma conta?"
+          backButtonLabel="Entrar"
+          text="Já tem uma conta?"
           backButtonHref="/auth/login"
-          showSocial
           classNames="lg:rounded-l-none"
-          title="Registrar"
+          title="Registre-se"
         >
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">

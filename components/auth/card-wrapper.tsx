@@ -2,7 +2,7 @@
 
 import { BackButton } from "@/components/auth/back-button";
 import { Header } from "@/components/auth/header";
-import { Social } from "@/components/auth/social";
+import { SocialLogin } from "@/components/auth/social-login";
 import {
   Card,
   CardContent,
@@ -20,6 +20,7 @@ interface CardWrapperProps {
   showSocial?: boolean;
   classNames?: ClassNameValue;
   title: string;
+  text: string;
 }
 
 export const CardWrapper = ({
@@ -30,6 +31,7 @@ export const CardWrapper = ({
   showSocial,
   classNames,
   title,
+  text,
 }: CardWrapperProps) => {
   return (
     <Card className={`${classNames} w-[400px] shadow-md`}>
@@ -39,12 +41,12 @@ export const CardWrapper = ({
       <CardContent>{children}</CardContent>
       {showSocial && (
         <CardFooter>
-          <Social />
+          <SocialLogin />
         </CardFooter>
       )}
 
       <CardFooter>
-        <BackButton label={backButtonLabel} href={backButtonHref} />
+        <BackButton text={text} label={backButtonLabel} href={backButtonHref} />
       </CardFooter>
     </Card>
   );

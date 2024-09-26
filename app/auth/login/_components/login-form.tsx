@@ -1,9 +1,8 @@
 "use client";
 
 import { login } from "@/actions/login";
+import AuthFormMessage from "@/components/auth/auth-form-message";
 import { CardWrapper } from "@/components/auth/card-wrapper";
-import { FormError } from "@/components/form-error";
-import { FormSuccess } from "@/components/form-success";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import {
@@ -15,8 +14,9 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { loginSchema } from "@/schemas";
+import { loginSchema } from "@/schemas/auth";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { LoaderCircle } from "lucide-react";
 import Image from "next/image";
 import { useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
@@ -35,24 +35,32 @@ export const LoginForm = () => {
     },
   });
 
-  function onSubmit(values: z.infer<typeof loginSchema>) {
-    setError("");
-    setSuccess("");
+  const onSubmit = async (values: z.infer<typeof loginSchema>) => {
+    startTransition(async () => {
+      try {
+        const resp = await login(values);
 
-    startTransition(() => {
-      login(values).then((data) => {
-        setError(data.error);
-        setSuccess(data.success);
-      });
+        if (!resp) {
+          setError("Resposta inválida do servidor");
+          setSuccess("");
+          form.reset();
+          return;
+        }
+      } catch {
+        setError("Algo deu errado");
+        setSuccess("");
+        form.reset();
+      }
     });
-  }
+  };
 
   return (
     <div className="lg:grid lg:grid-cols-2 items-center justify-center">
       <div>
         <CardWrapper
           headerLabel="Bem vindo de volta"
-          backButtonLabel="Não tem uma conta?"
+          backButtonLabel="Cadastre-se"
+          text="Não tem uma conta?"
           backButtonHref="/auth/register"
           showSocial
           classNames="lg:rounded-r-none"
@@ -98,9 +106,22 @@ export const LoginForm = () => {
                   )}
                 />
               </div>
-              <FormError message={error} />
-              <FormSuccess message={success} />
+              {/* {callbackError && <AuthFormMessage type="error" message={callbackError} title="Erro" />} */}
+              {error && (
+                <AuthFormMessage type="error" message={error} title="Erro" />
+              )}
+              {success && (
+                <AuthFormMessage
+                  type="success"
+                  message={success}
+                  title="Sucesso"
+                />
+              )}
               <Button type="submit" className="w-full" disabled={isPending}>
+                <LoaderCircle
+                  size={20}
+                  className={!isPending ? "hidden" : "animate-spin mr-2"}
+                />
                 Entrar
               </Button>
             </form>
