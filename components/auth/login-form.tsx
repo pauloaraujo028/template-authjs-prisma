@@ -1,7 +1,6 @@
 "use client";
 
-import { login } from "@/actions/login";
-import AuthFormMessage from "@/components/auth/auth-form-message";
+import { login } from "@/actions/auth/login";
 import { CardWrapper } from "@/components/auth/card-wrapper";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -18,14 +17,23 @@ import { loginSchema } from "@/schemas/auth";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { LoaderCircle } from "lucide-react";
 import Image from "next/image";
+import { useSearchParams } from "next/navigation";
 import { useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import { FormMessageError } from "./form-message-error";
 
 export const LoginForm = () => {
   const [error, setError] = useState<string | undefined>("");
   const [success, setSuccess] = useState<string | undefined>("");
   const [isPending, startTransition] = useTransition();
+
+  const searchParams = useSearchParams();
+  const callbackError = searchParams
+    ? searchParams.get("error") === "OAuthAccountNotLinked"
+      ? "E-mail em uso com provedor diferente"
+      : undefined
+    : undefined;
 
   const form = useForm<z.infer<typeof loginSchema>>({
     resolver: zodResolver(loginSchema),
@@ -106,15 +114,28 @@ export const LoginForm = () => {
                   )}
                 />
               </div>
-              {/* {callbackError && <AuthFormMessage type="error" message={callbackError} title="Erro" />} */}
+              {callbackError && (
+                <FormMessageError
+                  type="error"
+                  message={callbackError}
+                  title="Erro"
+                  onClearMessage={() => setError("")}
+                />
+              )}
               {error && (
-                <AuthFormMessage type="error" message={error} title="Erro" />
+                <FormMessageError
+                  type="error"
+                  message={error}
+                  title="Erro"
+                  onClearMessage={() => setError("")}
+                />
               )}
               {success && (
-                <AuthFormMessage
+                <FormMessageError
                   type="success"
                   message={success}
                   title="Sucesso"
+                  onClearMessage={() => setSuccess("")}
                 />
               )}
               <Button type="submit" className="w-full" disabled={isPending}>

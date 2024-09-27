@@ -1,9 +1,7 @@
 "use client";
 
-import { register } from "@/actions/register";
+import { register } from "@/actions/auth/register";
 import { CardWrapper } from "@/components/auth/card-wrapper";
-import { FormError } from "@/components/form-error";
-import { FormSuccess } from "@/components/form-success";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import {
@@ -17,14 +15,16 @@ import {
 import { Input } from "@/components/ui/input";
 import { registerSchema } from "@/schemas/auth";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { LoaderCircle } from "lucide-react";
 import Image from "next/image";
 import { useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import { FormMessageError } from "./form-message-error";
 
 export const RegisterForm = () => {
-  const [error, setError] = useState<string | undefined>("");
-  const [success, setSuccess] = useState<string | undefined>("");
+  const [error, setError] = useState<string>("");
+  const [success, setSuccess] = useState<string>("");
   const [isPending, startTransition] = useTransition();
 
   const form = useForm<z.infer<typeof registerSchema>>({
@@ -36,17 +36,24 @@ export const RegisterForm = () => {
     },
   });
 
-  function onSubmit(values: z.infer<typeof registerSchema>) {
-    setError("");
-    setSuccess("");
+  const onSubmit = (values: z.infer<typeof registerSchema>) => {
+    startTransition(async () => {
+      try {
+        const { success, error } = await register(values);
 
-    startTransition(() => {
-      register(values).then((data) => {
-        setError(data.error);
-        setSuccess(data.success);
-      });
+        if (error) {
+          setError(error);
+        }
+
+        setSuccess(success || "");
+        form.reset();
+      } catch (error) {
+        setSuccess("");
+        setError("Algo deu errado!");
+        form.reset();
+      }
     });
-  }
+  };
 
   return (
     <div className="lg:grid lg:grid-cols-2 items-center justify-center">
@@ -127,9 +134,27 @@ export const RegisterForm = () => {
                   )}
                 />
               </div>
-              <FormError message={error} />
-              <FormSuccess message={success} />
+              {error && (
+                <FormMessageError
+                  type="error"
+                  message={error}
+                  title="Erro"
+                  onClearMessage={() => setError("")}
+                />
+              )}
+              {success && (
+                <FormMessageError
+                  type="success"
+                  message={success}
+                  title="Sucesso"
+                  onClearMessage={() => setSuccess("")}
+                />
+              )}
               <Button type="submit" className="w-full" disabled={isPending}>
+                <LoaderCircle
+                  size={20}
+                  className={!isPending ? "hidden" : "animate-spin mr-2"}
+                />
                 Criar uma conta
               </Button>
             </form>
