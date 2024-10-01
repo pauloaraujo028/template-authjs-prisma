@@ -16,32 +16,36 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { LoaderCircle } from "lucide-react";
 import Image from "next/image";
 // import { useSearchParams } from "next/navigation";
-import { resetPassword } from "@/actions/auth/password-reset";
-import { resetPasswordSchema } from "@/schemas/auth";
+import { changePassword } from "@/actions/auth/password-reset";
+import { newPasswordSchema } from "@/schemas/auth";
+import { useSearchParams } from "next/navigation";
 import { useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import AuthFormMessage from "./auth-form-message";
 
-export const ResetPasswordForm = () => {
+export const ChangePasswordForm = () => {
   const [error, setError] = useState<string | undefined>("");
   const [success, setSuccess] = useState<string | undefined>("");
   const [isPending, startTransition] = useTransition();
 
-  const form = useForm<z.infer<typeof resetPasswordSchema>>({
-    resolver: zodResolver(resetPasswordSchema),
+  const searchParams = useSearchParams();
+  const token = searchParams.get("token");
+
+  const form = useForm<z.infer<typeof newPasswordSchema>>({
+    resolver: zodResolver(newPasswordSchema),
     defaultValues: {
-      email: "",
+      password: "",
     },
   });
 
-  const onSubmit = async (values: z.infer<typeof resetPasswordSchema>) => {
+  const onSubmit = async (values: z.infer<typeof newPasswordSchema>) => {
     setError("");
     setSuccess("");
 
     startTransition(async () => {
       try {
-        const { success, error } = await resetPassword(values);
+        const { success, error } = await changePassword(values, token);
         if (error) setError(error);
         setSuccess(success || "");
         form.reset();
@@ -57,7 +61,7 @@ export const ResetPasswordForm = () => {
     <div className="lg:grid lg:grid-cols-2 items-center justify-center">
       <div>
         <CardWrapper
-          headerLabel="Esqueceu sua senha?"
+          headerLabel="Digite uma nova senha"
           backButtonLabel="Voltar ao login"
           backButtonHref="/auth/login"
           classNames="lg:rounded-r-none"
@@ -68,16 +72,16 @@ export const ResetPasswordForm = () => {
               <div className="space-y-4">
                 <FormField
                   control={form.control}
-                  name="email"
+                  name="password"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>E-mail</FormLabel>
+                      <FormLabel>Senha</FormLabel>
                       <FormControl>
                         <Input
-                          placeholder="name@exemplo.com"
+                          placeholder="******"
                           {...field}
                           disabled={isPending}
-                          type="email"
+                          type="password"
                         />
                       </FormControl>
                       <FormMessage />
@@ -114,7 +118,7 @@ export const ResetPasswordForm = () => {
                   size={20}
                   className={!isPending ? "hidden" : "animate-spin mr-2"}
                 />
-                Enviar e-mail de redefinição
+                Redefinir senha
               </Button>
             </form>
           </Form>
