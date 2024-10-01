@@ -1,6 +1,5 @@
 "use client";
 
-import { login } from "@/actions/auth/login";
 import { CardWrapper } from "@/components/auth/card-wrapper";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -13,41 +12,33 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { loginSchema } from "@/schemas/auth";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { LoaderCircle } from "lucide-react";
 import Image from "next/image";
 // import { useSearchParams } from "next/navigation";
-import Link from "next/link";
+import { changePassword } from "@/actions/auth/password-reset";
+import { resetPasswordSchema } from "@/schemas/auth";
 import { useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import AuthFormMessage from "./auth-form-message";
 
-export const LoginForm = () => {
-  const [error, setError] = useState<string>("");
-  const [success, setSuccess] = useState<string>("");
+export const ResetPasswordForm = () => {
+  const [error, setError] = useState<string | undefined>("");
+  const [success, setSuccess] = useState<string | undefined>("");
   const [isPending, startTransition] = useTransition();
 
-  // const searchParams = useSearchParams();
-  // const callbackError = searchParams
-  //   ? searchParams.get("error") === "OAuthAccountNotLinked"
-  //     ? "E-mail em uso com provedor diferente"
-  //     : undefined
-  //   : undefined;
-
-  const form = useForm<z.infer<typeof loginSchema>>({
-    resolver: zodResolver(loginSchema),
+  const form = useForm<z.infer<typeof resetPasswordSchema>>({
+    resolver: zodResolver(resetPasswordSchema),
     defaultValues: {
       email: "",
-      password: "",
     },
   });
 
-  const onSubmit = async (values: z.infer<typeof loginSchema>) => {
+  const onSubmit = async (values: z.infer<typeof resetPasswordSchema>) => {
     startTransition(async () => {
       try {
-        const resp = await login(values);
+        const resp = await changePassword(values);
 
         if (!resp) {
           setError("Resposta inválida do servidor");
@@ -83,13 +74,11 @@ export const LoginForm = () => {
     <div className="lg:grid lg:grid-cols-2 items-center justify-center">
       <div>
         <CardWrapper
-          headerLabel="Bem vindo de volta"
-          backButtonLabel="Cadastre-se"
-          text="Não tem uma conta?"
-          backButtonHref="/auth/register"
-          showSocial
+          headerLabel="Esqueceu sua senha?"
+          backButtonLabel="Voltar ao login"
+          backButtonHref="/auth/login"
           classNames="lg:rounded-r-none"
-          title="Login"
+          title="Auth"
         >
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
@@ -108,34 +97,6 @@ export const LoginForm = () => {
                           type="email"
                         />
                       </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="password"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Senha</FormLabel>
-                      <FormControl>
-                        <Input
-                          {...field}
-                          disabled={isPending}
-                          placeholder="******"
-                          type="password"
-                        />
-                      </FormControl>
-                      <Button
-                        size="sm"
-                        variant="link"
-                        asChild
-                        className="flex justify-end px-0 font-normal"
-                      >
-                        <Link href="/auth/reset-password">
-                          Esqueceu a senha?
-                        </Link>
-                      </Button>
                       <FormMessage />
                     </FormItem>
                   )}
@@ -170,7 +131,7 @@ export const LoginForm = () => {
                   size={20}
                   className={!isPending ? "hidden" : "animate-spin mr-2"}
                 />
-                Entrar
+                Enviar e-mail de redefinição
               </Button>
             </form>
           </Form>

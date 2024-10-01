@@ -23,3 +23,9 @@ export const registerSchema = object({
     "O nome é obrigatório"
   ),
 });
+
+export const resetPasswordSchema = object({
+  email: string().email({
+    message: "E-mail é obrigatório",
+  }),
+});
