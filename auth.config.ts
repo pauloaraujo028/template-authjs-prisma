@@ -1,7 +1,7 @@
 import bcrypt from "bcryptjs";
 import type { NextAuthConfig } from "next-auth";
 import { loginSchema } from "./schemas/auth";
-import { findUserbyEmail } from "./services";
+import { getUserbyEmail } from "./services/auth";
 
 import Credentials from "next-auth/providers/credentials";
 import Github from "next-auth/providers/github";
@@ -24,7 +24,7 @@ export default {
         if (validatedFields.success) {
           const { email, password } = validatedFields.data;
 
-          const user = await findUserbyEmail(email);
+          const user = await getUserbyEmail(email);
 
           if (!user || !user.password) return null;
 
