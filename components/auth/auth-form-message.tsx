@@ -4,7 +4,7 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 interface AuthFormMessageProps {
   title?: string;
-  message: string;
+  message: string | undefined;
   type: "success" | "error";
   // onClearMessage: () => void;
 }

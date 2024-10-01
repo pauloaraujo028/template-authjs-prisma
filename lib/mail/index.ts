@@ -6,7 +6,7 @@ export const sendAccountVerificationEmail = async (
   email: string,
   token: string
 ) => {
-  const confirmLink = `http://localhost:3000/auth/new-verification?token=${token}`;
+  const confirmLink = `http://localhost:3000/auth/verify-email?token=${token}`;
 
   await mail.emails.send({
     from: "onboarding@resend.dev",
