@@ -1,27 +1,26 @@
 import { AlertCircle, CheckCircle } from "lucide-react";
 
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { useEffect } from "react";
 
 interface AuthFormMessageProps {
   title?: string;
   message: string;
   type: "success" | "error";
-  onClearMessage: () => void;
+  // onClearMessage: () => void;
 }
 const AuthFormMessage = ({
   message,
   type,
   title,
-  onClearMessage,
-}: AuthFormMessageProps) => {
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      onClearMessage();
-    }, 3000);
+}: // onClearMessage,
+AuthFormMessageProps) => {
+  // useEffect(() => {
+  //   const timer = setTimeout(() => {
+  //     onClearMessage();
+  //   }, 3000);
 
-    return () => clearTimeout(timer);
-  }, [onClearMessage]);
+  //   return () => clearTimeout(timer);
+  // }, [onClearMessage]);
 
   return (
     <Alert variant={type}>

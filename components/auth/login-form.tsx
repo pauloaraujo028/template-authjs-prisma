@@ -17,23 +17,23 @@ import { loginSchema } from "@/schemas/auth";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { LoaderCircle } from "lucide-react";
 import Image from "next/image";
-import { useSearchParams } from "next/navigation";
+// import { useSearchParams } from "next/navigation";
 import { useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { FormMessageError } from "./form-message-error";
+import AuthFormMessage from "./auth-form-message";
 
 export const LoginForm = () => {
-  const [error, setError] = useState<string | undefined>("");
-  const [success, setSuccess] = useState<string | undefined>("");
+  const [error, setError] = useState<string>("");
+  const [success, setSuccess] = useState<string>("");
   const [isPending, startTransition] = useTransition();
 
-  const searchParams = useSearchParams();
-  const callbackError = searchParams
-    ? searchParams.get("error") === "OAuthAccountNotLinked"
-      ? "E-mail em uso com provedor diferente"
-      : undefined
-    : undefined;
+  // const searchParams = useSearchParams();
+  // const callbackError = searchParams
+  //   ? searchParams.get("error") === "OAuthAccountNotLinked"
+  //     ? "E-mail em uso com provedor diferente"
+  //     : undefined
+  //   : undefined;
 
   const form = useForm<z.infer<typeof loginSchema>>({
     resolver: zodResolver(loginSchema),
@@ -54,6 +54,22 @@ export const LoginForm = () => {
           form.reset();
           return;
         }
+
+        const { error, success } = resp;
+
+        if (error) {
+          setError(resp.error);
+          setSuccess("");
+          form.reset();
+          return;
+        }
+        if (success) {
+          setSuccess(success);
+          setError("");
+          return;
+        }
+
+        form.reset();
       } catch {
         setError("Algo deu errado");
         setSuccess("");
@@ -114,28 +130,28 @@ export const LoginForm = () => {
                   )}
                 />
               </div>
-              {callbackError && (
+              {/* {callbackError && (
                 <FormMessageError
                   type="error"
                   message={callbackError}
                   title="Erro"
                   onClearMessage={() => setError("")}
                 />
-              )}
+              )} */}
               {error && (
-                <FormMessageError
+                <AuthFormMessage
                   type="error"
                   message={error}
                   title="Erro"
-                  onClearMessage={() => setError("")}
+                  // onClearMessage={() => setError("")}
                 />
               )}
               {success && (
-                <FormMessageError
+                <AuthFormMessage
                   type="success"
                   message={success}
                   title="Sucesso"
-                  onClearMessage={() => setSuccess("")}
+                  // onClearMessage={() => setSuccess("")}
                 />
               )}
               <Button type="submit" className="w-full" disabled={isPending}>
